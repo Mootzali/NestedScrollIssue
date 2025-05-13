@@ -1,131 +1,142 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React, { useState } from 'react'
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native'
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+const ItemBox = ({ title }) => (
+  <View style={styles.itemBox}>
+    <Text>{title}</Text>
+  </View>
+)
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+export default function NestedScrollTest() {
+  const tabs = [
+    { key: 'one', title: 'Tab One' },
+    { key: 'two', title: 'Tab Two' },
+    { key: 'three', title: 'Tab Three' },
+    { key: 'four', title: 'Tab Four' },
+    { key: 'five', title: 'Tab Five' },
+  ]
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+  // Generate lots of items so it scrolls
+  const allItems = Array.from({ length: 50 }, (_, i) => `Item #${i + 1}`)
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+  const [activeTab, setActiveTab] = useState(tabs[0].key)
 
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  /*
-   * To keep the template simple and small we're adding padding to prevent view
-   * from rendering under the System UI.
-   * For bigger apps the recommendation is to use `react-native-safe-area-context`:
-   * https://github.com/AppAndFlow/react-native-safe-area-context
-   *
-   * You can read more about it here:
-   * https://github.com/react-native-community/discussions-and-proposals/discussions/827
-   */
-  const safePadding = '5%';
+  const filteredItems = allItems.filter(
+    (_, idx) => idx % tabs.length === tabs.findIndex(t => t.key === activeTab)
+  )
 
   return (
-    <View style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
+    <SafeAreaView style={styles.container}>
+      <TouchableOpacity
+        style={styles.submitButton}
+        onPress={() => alert(`Submitting on "${activeTab}"`)}
+      >
+        <Text style={styles.submitText}>Top Submit Button</Text>
+      </TouchableOpacity>
+      {/* Vertical scroll area with sticky header */}
       <ScrollView
-        style={backgroundStyle}>
-        <View style={{paddingRight: safePadding}}>
-          <Header/>
+        style={styles.scrollContainer}
+        contentContainerStyle={{ paddingBottom: 20 }}
+        nestedScrollEnabled
+        removeClippedSubviews={false}
+        stickyHeaderIndices={[0]}
+      >
+        {/* Sticky horizontal tab bar */}
+        <View style={styles.stickyContainer} pointerEvents="box-none">
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            nestedScrollEnabled
+            pointerEvents="auto"
+            contentContainerStyle={styles.tabBar}
+            onStartShouldSetResponder={() => true}
+          >
+            {tabs.map(tab => (
+              <TouchableOpacity
+                key={tab.key}
+                onPress={() => setActiveTab(tab.key)}
+                activeOpacity={0.7}
+                style={[
+                  styles.tabButton,
+                  activeTab === tab.key && styles.activeTab,
+                ]}
+              >
+                <Text style={
+                  activeTab === tab.key ? styles.activeTabText : styles.tabText
+                }>
+                  {tab.title}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </View>
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-            paddingHorizontal: safePadding,
-            paddingBottom: safePadding,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
+
+        {filteredItems.map(title => (
+          <ItemBox key={title} title={title} />
+        ))}
       </ScrollView>
-    </View>
-  );
+
+      <TouchableOpacity
+        style={styles.submitButton}
+        onPress={() => alert(`Submitting on "${activeTab}"`)}
+      >
+        <Text style={styles.submitText}>Bottom Submit Button</Text>
+      </TouchableOpacity>
+    </SafeAreaView>
+  )
 }
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  container: {
+    flex: 1,
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  scrollContainer: {
+    flex: 1,
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
+  stickyContainer: {
+    backgroundColor: 'white',
+    zIndex: 10,
+    elevation: 4,
   },
-  highlight: {
-    fontWeight: '700',
+  tabBar: {
+    paddingVertical: 10,
+    paddingHorizontal: 8,
   },
-});
-
-export default App;
+  tabButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    marginRight: 8,
+    borderRadius: 4,
+    backgroundColor: '#EEE',
+  },
+  activeTab: {
+    backgroundColor: '#4A90E2',
+  },
+  tabText: {
+    fontSize: 14,
+    color: '#333',
+  },
+  activeTabText: {
+    fontSize: 14,
+    color: '#FFF',
+  },
+  itemBox: {
+    height: 80,
+    marginHorizontal: 16,
+    marginVertical: 8,
+    backgroundColor: '#F9F9F9',
+    borderRadius: 6,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 2,
+  },
+  submitButton: {
+    padding: 16,
+    backgroundColor: '#28A745',
+    alignItems: 'center',
+  },
+  submitText: {
+    color: '#FFF',
+    fontSize: 16,
+  },
+})
