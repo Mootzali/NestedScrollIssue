@@ -1,7 +1,5 @@
 # NestedScrollIssue
 
-![Build](https://github.com/Mootzali/NestedScrollIssue/workflows/Pre%20Merge%20Checks/badge.svg)
-
 This is my React Native Reproducer project.
 
 # Reproducer TODO list
