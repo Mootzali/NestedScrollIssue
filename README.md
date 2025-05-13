@@ -1,6 +1,12 @@
 # NestedScrollIssue
 
 This is my React Native Reproducer project.
+---
+
+## 🐛 Description  
+When you nest a horizontal `ScrollView` with touchable tabs inside a vertical `ScrollView` (or `SectionList`) that uses `stickyHeaderIndices`, the horizontal scroll still works, but the individual tab `TouchableOpacity` buttons no longer fire their `onPress` once the header becomes pinned. As soon as you scroll back up even one pixel and the header unsticks, the buttons work again.
+
+---
 
 # Reproducer TODO list
 
