@@ -2,15 +2,15 @@
 
 ![Build](https://github.com/Mootzali/NestedScrollIssue/workflows/Pre%20Merge%20Checks/badge.svg)
 
-This is your new React Native Reproducer project.
+This is my React Native Reproducer project.
 
 # Reproducer TODO list
 
 - [x] 1. Create a new reproducer project.
-- [ ] 2. Git clone your repository locally.
-- [ ] 3. Edit the project to reproduce the failure you're seeing.
-- [ ] 4. Push your changes, so that Github Actions can run the CI.
-- [ ] 5. Make sure the repository is public and share the link with the issue you reported.
+- [x] 2. Git clone your repository locally.
+- [x] 3. Edit the project to reproduce the failure you're seeing.
+- [x] 4. Push your changes, so that Github Actions can run the CI.
+- [x] 5. Make sure the repository is public and share the link with the issue you reported.
 
 # How to use this Reproducer
 
@@ -33,9 +33,9 @@ npm start
 yarn start
 ```
 
-## Step 2: Start your Application
+## Step 2: Start  Application
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
+Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start _Android_ app:
 
 ### For Android
 
@@ -47,33 +47,38 @@ npm run android
 yarn android
 ```
 
-### For iOS
 
-First, make sure you install dependencies with:
 
-```bash
-cd ios && bundle install && bundle exec pod install
-```
+## ✅ Expected Behavior  
+Tab buttons inside the horizontal `ScrollView` should always fire their `onPress` handlers, whether the header is pinned or not.
 
-Then you can run the iOS app with:
+---
 
-```bash
-# using npm
-npm run ios
+## ❌ Actual Behavior  
+While the header is stuck at the top, the `TouchableOpacity` tabs do not receive touch events, even though horizontal scrolling still works.
 
-# OR using Yarn
-yarn ios
-```
+---
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+## 📋 Environment  
+- **React Native version:** 0.79.1  
+- **Platform:** iOS & Android  
+- **Reproducible in:** Clean new project and existing codebase  
+- **Device/Simulator:** e.g. iPhone 12 (iOS 16), Pixel 4 (Android 12)
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+---
 
-## Step 3: Modifying your App
+## 🔧 Workarounds Tried  
+- `pointerEvents="box-none"` on wrapping `<View>` + `pointerEvents="auto"` on inner `<ScrollView>`  
+- `onStartShouldSetResponder={() => true}` on horizontal `<ScrollView>`  
+- `removeClippedSubviews={false}` on outer `<ScrollView>`  
+*(All restore horizontal scrolling but do not restore tab presses when sticky.)*
 
-Now that you have successfully run the app, let's modify it.
+---
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+## 📎 Additional Context  
+This also affects nested scrolls outside of `stickyHeaderIndices`—touchables inside any “pinned” overlay lose their responder. Seems like a touch-responder regression in RN 0.79’s sticky/nested scrolling logic.
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+---
+
+**Please let me know if you need any more details or logs!**
+
