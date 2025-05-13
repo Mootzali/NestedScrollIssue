@@ -60,10 +60,10 @@ While the header is stuck at the top, the `TouchableOpacity` tabs do not receive
 ---
 
 ## 📋 Environment  
-- **React Native version:** 0.79.1  
-- **Platform:** iOS & Android  
+- **React Native version:** 0.79.2 
+- **Platform:**  Android  
 - **Reproducible in:** Clean new project and existing codebase  
-- **Device/Simulator:** e.g. iPhone 12 (iOS 16), Pixel 4 (Android 12)
+- **Device/Simulator:**  Pixel 4 (Android 12)
 
 ---
 
